@@ -30,7 +30,7 @@ class VKAPIClient:
         params = self._get_common_params()
         params.update({'user_id': self.user_id})
         response = requests.get(self._build_url('users.get'), params=params)
-        if _check_error(response):
+        if list is type(_check_error(response)):
             result = _check_error(response)
             if result:
                 self.user_int_id = result[0]['id']
@@ -46,6 +46,7 @@ class VKAPIClient:
         })
         response = requests.get(self._build_url('photos.getAlbums'), params=params)
         result = []
+        print(_check_error(response))
         if 'error' not in _check_error(response).keys():
             print('Вам доступны альбомы:')
             albums = [
@@ -56,6 +57,7 @@ class VKAPIClient:
             for num, album in enumerate(albums):
                 result.append([num, {album['id']: album['title']}])
             self.albums = result
+            return result
         else:
             print('Вам доступны альбомы: ')
             result = [[
@@ -65,16 +67,17 @@ class VKAPIClient:
             self.albums = result
         return result
 
-    def get_photos(self, album_id=0):
+    def get_photos(self, album_id=0, count=5):
         print('Получаем список фотографий альбома пользователя:')
         params = self._get_common_params()
         params.update({
             'owner_id': self.user_int_id,
             'extended': 1,
         })
-        if list is type(self.albums):
+        if list is type(self.albums) and len(self.albums) >= album_id:
             params.update({'album_id': ''.join([str(key) for key in self.albums[album_id][1].keys()])})
             album_title = ''.join([str(value) for value in self.albums[album_id][1].values()])
+            # TODO добавить условие для вывода всех фотографий, если кол-во больше фотографий
         else:
             params.update({'album_id': 'profile'})
             album_title = 'Фотографии профиля'
@@ -89,7 +92,7 @@ class VKAPIClient:
                     'size': photo['sizes'][-1]['type']
                 })
             print(f'В альбоме "{album_title}" найдено {len(photos)} фотографий')
-            return photos
+            return photos[-count:]
 
 
 def _check_error(response):
@@ -108,7 +111,7 @@ def _check_error(response):
 
 if __name__ == '__main__':
     vk = VKAPIClient(
-          # '60453017'
+          '60453017'
     )
     vk.get_photo_albums()
     print(
