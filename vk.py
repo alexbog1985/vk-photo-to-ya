@@ -46,18 +46,15 @@ class VKAPIClient:
         })
         response = requests.get(self._build_url('photos.getAlbums'), params=params)
         result = []
-        print(_check_error(response))
         if 'error' not in _check_error(response).keys():
             print('Вам доступны альбомы:')
             albums = [
                          {'id': 'profile', 'title': 'Фотографии профиля'},
                          {'id': 'wall', 'title': 'Фотографии со стены'},
-                         {'id': 'saved', 'title': 'Сохраненные фотографии'},
                      ] + [item for item in _check_error(response)['items']]
             for num, album in enumerate(albums):
                 result.append([num, {album['id']: album['title']}])
             self.albums = result
-            return result
         else:
             print('Вам доступны альбомы: ')
             result = [[
@@ -65,7 +62,6 @@ class VKAPIClient:
                 {'profile': 'Фотографии профиля'}
             ]]
             self.albums = result
-        return result
 
     def get_photos(self, album_id=0, count=5):
         print('Получаем список фотографий альбома пользователя:')
@@ -77,7 +73,6 @@ class VKAPIClient:
         if list is type(self.albums) and len(self.albums) >= album_id:
             params.update({'album_id': ''.join([str(key) for key in self.albums[album_id][1].keys()])})
             album_title = ''.join([str(value) for value in self.albums[album_id][1].values()])
-            # TODO добавить условие для вывода всех фотографий, если кол-во больше фотографий
         else:
             params.update({'album_id': 'profile'})
             album_title = 'Фотографии профиля'

@@ -12,7 +12,7 @@ def start_program():
         ask = input('Введите "Да" или "Нет": ')
         print()
         if ask.lower() == 'да' or ask is not None:
-            print(show_albums(vk_user))
+            show_albums(vk_user)
         album_id = input('Чтобы выбрать альбом, введите номер альбома: ')
         if album_id.isdigit():
             photos = get_user_photos(vk_user, album_id=int(album_id))
@@ -23,8 +23,8 @@ def start_program():
 
 
 def show_albums(vk_user):
-    print(vk_user.get_photo_albums())
-    for album in vk_user.get_photo_albums():
+    vk_user.get_photo_albums()
+    for album in vk_user.albums:
         print(f'{album[0]} - "{''.join(album[1].values())}"')
 
 
