@@ -1,6 +1,7 @@
 import secret
 import requests
 import datetime
+from tqdm import tqdm
 
 VK_TOKEN = secret.VK_TOKEN
 
@@ -10,6 +11,7 @@ class VKAPIClient:
 
     def __init__(self, user_id=None, token=VK_TOKEN):
         self.albums = None
+        self.photos = None
         self.user_int_id = None
         self.user_name = None
         self.user_id = user_id
@@ -64,7 +66,7 @@ class VKAPIClient:
             self.albums = result
 
     def get_photos(self, album_id=0, count=5):
-        print('Получаем список фотографий альбома пользователя:')
+        print(f'Получаем {count} последних фотографий альбома пользователя:')
         params = self._get_common_params()
         params.update({
             'owner_id': self.user_int_id,
@@ -86,8 +88,24 @@ class VKAPIClient:
                     'url': photo['sizes'][-1]['url'],
                     'size': photo['sizes'][-1]['type']
                 })
-            print(f'В альбоме "{album_title}" найдено {len(photos)} фотографий')
+            self.photos = photos[-count:]
+            print(f'Получили {count} фотографий из альбома "{album_title}"')
             return photos[-count:]
+
+    def download_photo(self):
+        if self.photos:
+            names_list = []
+            for photo in self.photos:
+                response = requests.get(photo['url'])
+                file_name = f"{photo['likes']}"
+                if file_name in names_list:
+                    file_name += f'-{photo['create_date']}'
+                    photo.update({'file_name': file_name + '.jpg', 'content': response.content})
+                else:
+                    photo.update({'file_name': file_name + '.jpg', 'content': response.content})
+                    names_list.append(file_name)
+        else:
+            print('Ошибка')
 
 
 def _check_error(response):
@@ -108,10 +126,12 @@ if __name__ == '__main__':
     vk = VKAPIClient(
           '60453017'
     )
-    vk.get_photo_albums()
     print(
         vk.user_name, '\n',
         vk.user_int_id, '\n',
-        # vk.albums, '\n',
-        vk.get_photos()
     )
+    vk.get_photo_albums()
+    vk.get_photos()
+
+    vk.download_photo()
+    print(vk.photos[1].keys())
