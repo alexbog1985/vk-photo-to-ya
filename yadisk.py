@@ -1,6 +1,5 @@
 import secret
 import requests
-from tqdm import tqdm
 
 YA_TOKEN = secret.YA_TOKEN
 

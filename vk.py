@@ -1,7 +1,6 @@
 import secret
 import requests
 import datetime
-from tqdm import tqdm
 
 VK_TOKEN = secret.VK_TOKEN
 

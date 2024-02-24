@@ -1,3 +1,5 @@
+import json
+import os
 from vk import VKAPIClient
 from yadisk import YaDiskAPI
 from secret import VK_TOKEN, YA_TOKEN
@@ -41,13 +43,19 @@ def get_user_photos(vk_user, album_id):
 def save_photos(vk_user, ya_disk):
     path = input('Введите название папки на Я.Диске для сохранения фотографий: ')
     ya_disk.add_dir(path)
+    if not f'{os.getcwd()}{os.sep}{os.path.isdir("files_info")}':
+        os.mkdir(f'{os.getcwd()}{os.sep}files_info')
+    info_ = []
     for photo in vk_user.photos:
         status_code = ya_disk.save_images(path, photo['file_name'], photo['content'])
         if status_code == 201:
             print(f'Фотография {photo['file_name']} загружена в папку {path}')
+            info_.append({'file_name': photo['file_name'], 'size': photo['size'], 'path': path})
         else:
             print('Что-то пошло не так...')
             print(status_code)
+    with open(f"{os.getcwd()}{os.sep}files_info{os.sep}info.json", 'w') as f:
+        json.dump(info_, f)
 
 
 if __name__ == '__main__':
