@@ -43,7 +43,7 @@ def get_user_photos(vk_user, album_id):
 def save_photos(vk_user, ya_disk):
     path = input('Введите название папки на Я.Диске для сохранения фотографий: ')
     ya_disk.add_dir(path)
-    if not f'{os.getcwd()}{os.sep}{os.path.isdir("files_info")}':
+    if not os.path.isdir(f'{os.getcwd()}{os.sep}files_info'):
         os.mkdir(f'{os.getcwd()}{os.sep}files_info')
     info_ = []
     for photo in vk_user.photos:
