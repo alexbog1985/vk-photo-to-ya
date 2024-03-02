@@ -8,7 +8,7 @@ from log import error_log, info_log
 
 def main():
     print('Программа загружает фотографии VK пользователя из выбранного альбома и сохраняет на Я.Диске.')
-    ya_token = input('Введите Я.Токен с "Яндекс Полигона"')
+    ya_token = input('Введите Я.Токен с "Яндекс Полигона": ')
     user_id = input('Введите VK ID пользователя: ')
     vk_user = VKAPIClient(user_id=user_id, token=VK_TOKEN)
     ya_disk = YaDiskAPI(token=ya_token)
