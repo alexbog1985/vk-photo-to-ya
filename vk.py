@@ -1,12 +1,13 @@
 import secret
 import requests
 import datetime
+from urllib.parse import urljoin
 
 VK_TOKEN = secret.VK_TOKEN
 
 
 class VKAPIClient:
-    API_BASE_URL = 'https://api.vk.com/method'
+    API_BASE_URL = 'https://api.vk.com/method/'
 
     def __init__(self, user_id=None, token=VK_TOKEN):
         self.albums = None
@@ -25,7 +26,7 @@ class VKAPIClient:
         }
 
     def _build_url(self, api_method):
-        return f'{self.API_BASE_URL}/{api_method}'
+        return urljoin(self.API_BASE_URL, api_method)
 
     def get_user(self):
         params = self._get_common_params()
