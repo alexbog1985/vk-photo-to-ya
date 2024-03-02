@@ -2,6 +2,7 @@ import secret
 import requests
 import datetime
 from urllib.parse import urljoin
+from log import info_log, error_log
 
 VK_TOKEN = secret.VK_TOKEN
 
@@ -37,8 +38,10 @@ class VKAPIClient:
             if result:
                 self.user_int_id = result[0]['id']
                 self.user_name = result[0]['first_name'] + ' ' + result[0]['last_name']
+                info_log(f'{self.user_id} соответствует пользователю {self.user_name}')
         else:
             print(f'Пользователь с ID: "{self.user_id}" не найден')
+            error_log(f'Пользователь с ID: "{self.user_id}" не найден')
 
     def get_photo_albums(self):
         print('Получаем список фотоальбомов пользователя')
@@ -57,6 +60,7 @@ class VKAPIClient:
             for num, album in enumerate(albums):
                 result.append([num, {album['id']: album['title']}])
             self.albums = result
+            info_log(f'Получен список альбомов пользователя: {result}')
         else:
             print('Вам доступны альбомы: ')
             result = [[
@@ -64,6 +68,7 @@ class VKAPIClient:
                 {'profile': 'Фотографии профиля'}
             ]]
             self.albums = result
+            error_log(f'Ошибка: {response.json()}')
 
     def get_photos(self, album_id=0, count=5):
         print(f'Получаем {count} последних фотографий альбома пользователя:')
@@ -90,6 +95,7 @@ class VKAPIClient:
                 })
             self.photos = photos[-count:]
             print(f'Получили {count} фотографий из альбома "{album_title}"')
+            info_log(f'Получили {count} фотографий из альбома "{album_title}"')
             return photos[-count:]
 
     def download_photo(self):
@@ -104,8 +110,10 @@ class VKAPIClient:
                 else:
                     photo.update({'file_name': file_name + '.jpg', 'content': response.content})
                     names_list.append(file_name)
+            info_log(f'Загружен список фотографий: {names_list}')
         else:
             print('Ошибка')
+            error_log('Нет фотографий')
 
 
 def _check_error(response):
@@ -117,9 +125,11 @@ def _check_error(response):
             error_code = error_dict.get('error_code')
             error_msg = error_dict.get('error_msg')
             print(f'Ошибка №{error_code} - {error_msg}')
+            error_log(f'Ошибка №{error_code} - {error_msg}')
             return {'error': error_code}
     else:
         print("Ошибка соединения с сервером:", response.status_code)
+        error_log(f"Ошибка соединения с сервером: {response.status_code}")
 
 
 if __name__ == '__main__':

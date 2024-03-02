@@ -47,4 +47,3 @@ class YaDiskAPI:
 
 if __name__ == "__main__":
     ya = YaDiskAPI()
-    ya.get_disk_info()
