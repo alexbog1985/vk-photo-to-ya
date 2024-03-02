@@ -2,16 +2,16 @@ import json
 import os
 from vk import VKAPIClient
 from yadisk import YaDiskAPI
-from secret import VK_TOKEN, YA_TOKEN
+from secret import VK_TOKEN
 from log import error_log, info_log
 
 
 def main():
     print('Программа загружает фотографии VK пользователя из выбранного альбома и сохраняет на Я.Диске.')
-    # YA_TOKEN = input('Введите Я.Токен с "Яндекс Полигона"')
+    ya_token = input('Введите Я.Токен с "Яндекс Полигона"')
     user_id = input('Введите VK ID пользователя: ')
     vk_user = VKAPIClient(user_id=user_id, token=VK_TOKEN)
-    ya_disk = YaDiskAPI(token=YA_TOKEN)
+    ya_disk = YaDiskAPI(token=ya_token)
     if vk_user.user_int_id:
         print(f'Найден пользователь: {vk_user.user_name}\n')
         print('Список альбомов пользователя:')
